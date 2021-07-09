@@ -152,7 +152,7 @@ client.on('message', async message => {
         channel.userId = message.author.id;
         channel.lastNumber = number;
         await channel.save();
-        await message.react('✅');
+        await message.react(number === 100 ? '💯' : '✅');
 
         await Save.addSave(message.guild.id, message.author.id);
     }
