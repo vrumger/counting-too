@@ -6,6 +6,7 @@ const Save = require('./models/save');
 require('dotenv').config();
 
 const client = new Discord.Client();
+const prefix = process.env.BOT_PREFIX || '2!';
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}`);
@@ -155,6 +156,34 @@ client.on('message', async message => {
         await message.react(number === 100 ? '💯' : '✅');
 
         await Save.addSave(message.guild.id, message.author.id);
+        return;
+    }
+
+    if (words[0].startsWith(prefix)) {
+        const command = words[0].slice(prefix.length);
+        const args = words.slice(1);
+
+        if (command === 'server') {
+            const channel = await Channel.findOne({
+                guildId: message.guild.id,
+            });
+
+            const embed = new Discord.MessageEmbed();
+
+            embed.setColor('#8965d6');
+            embed.setTitle(`Info for ${message.guild.name}`);
+            embed.addField('Current number', channel.lastNumber);
+            embed.addField('Last counted by', `<@${channel.userId}>`);
+            embed.addField(
+                'High score',
+                `${
+                    channel.highScore
+                } (${channel.highScoreDate.toDateString()})`,
+            );
+            embed.setFooter(`${prefix}server`);
+
+            await message.channel.send(embed);
+        }
     }
 });
 
