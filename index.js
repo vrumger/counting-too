@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Discord = require('discord.js');
 const Channel = require('./models/channel');
+const Save = require('./models/save');
 
 require('dotenv').config();
 
@@ -9,6 +10,11 @@ const client = new Discord.Client();
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}`);
 });
+
+const formatSaveMessage = (userId, saves, lastNumber) =>
+    `⚠️ <@${userId}> You have used **1** of your saves. You have **${saves.toFixed(
+        2,
+    )}** left. The next number is **${lastNumber + 1}**`;
 
 client.on('message', async message => {
     if (message.author.bot) return;
@@ -43,6 +49,26 @@ client.on('message', async message => {
                 }
 
                 await message.react('✅');
+                await Save.addSave(message.guild.id, message.author.id);
+
+                return;
+            }
+
+            if (await Save.hasSaves(message.guild.id, message.author.id)) {
+                await Save.useSave(message.guild.id, message.author.id);
+
+                const saves = await Save.getSaves(
+                    message.guild.id,
+                    message.author.id,
+                );
+                await message.channel.send(
+                    formatSaveMessage(
+                        message.author.id,
+                        saves,
+                        channel.lastNumber,
+                    ),
+                );
+
                 return;
             }
 
@@ -60,6 +86,24 @@ client.on('message', async message => {
         }
 
         if (number !== channel.lastNumber + 1) {
+            if (await Save.hasSaves(message.guild.id, message.author.id)) {
+                await Save.useSave(message.guild.id, message.author.id);
+
+                const saves = await Save.getSaves(
+                    message.guild.id,
+                    message.author.id,
+                );
+                await message.channel.send(
+                    formatSaveMessage(
+                        message.author.id,
+                        saves,
+                        channel.lastNumber,
+                    ),
+                );
+
+                return;
+            }
+
             const { lastNumber } = channel;
 
             channel.userId = null;
@@ -73,6 +117,24 @@ client.on('message', async message => {
         }
 
         if (channel.userId === message.author.id) {
+            if (await Save.hasSaves(message.guild.id, message.author.id)) {
+                await Save.useSave(message.guild.id, message.author.id);
+
+                const saves = await Save.getSaves(
+                    message.guild.id,
+                    message.author.id,
+                );
+                await message.channel.send(
+                    formatSaveMessage(
+                        message.author.id,
+                        saves,
+                        channel.lastNumber,
+                    ),
+                );
+
+                return;
+            }
+
             const { lastNumber } = channel;
 
             channel.userId = null;
@@ -91,6 +153,8 @@ client.on('message', async message => {
         channel.lastNumber = number;
         await channel.save();
         await message.react('✅');
+
+        await Save.addSave(message.guild.id, message.author.id);
     }
 });
 
