@@ -19,7 +19,10 @@ module.exports = {
         embed.setColor('#8965d6');
         embed.setTitle(`Info for ${message.guild.name}`);
         embed.addField('Current number', channel.lastNumber);
-        embed.addField('Last counted by', `<@${channel.userId}>`);
+        embed.addField(
+            'Last counted by',
+            channel.userId ? `<@${channel.userId}>` : 'N/A',
+        );
         embed.addField(
             'High score',
             `${channel.highScore} (${channel.highScoreDate.toDateString()})`,
