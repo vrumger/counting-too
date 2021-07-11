@@ -1,3 +1,4 @@
+const fs = require('fs');
 const mongoose = require('mongoose');
 const Discord = require('discord.js');
 const Channel = require('./models/channel');
@@ -5,8 +6,20 @@ const Save = require('./models/save');
 
 require('dotenv').config();
 
-const client = new Discord.Client();
 const prefix = process.env.BOT_PREFIX || '2!';
+const client = new Discord.Client();
+
+client.prefix = prefix;
+client.commands = new Discord.Collection();
+
+const commandFiles = fs
+    .readdirSync(__dirname + '/commands')
+    .filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
+}
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}`);
@@ -159,30 +172,25 @@ client.on('message', async message => {
         return;
     }
 
-    if (words[0].startsWith(prefix)) {
-        const command = words[0].slice(prefix.length);
+    let command = words[0].toLowerCase();
+    if (command.startsWith(prefix)) {
+        command = command.slice(prefix.length);
         const args = words.slice(1);
 
-        if (command === 'server') {
-            const channel = await Channel.findOne({
-                guildId: message.guild.id,
-            });
+        if (!client.commands.has(command)) {
+            return;
+        }
 
-            const embed = new Discord.MessageEmbed();
+        try {
+            const handler = client.commands.get(command);
+            const result = handler.execute(message, args);
 
-            embed.setColor('#8965d6');
-            embed.setTitle(`Info for ${message.guild.name}`);
-            embed.addField('Current number', channel.lastNumber);
-            embed.addField('Last counted by', `<@${channel.userId}>`);
-            embed.addField(
-                'High score',
-                `${
-                    channel.highScore
-                } (${channel.highScoreDate.toDateString()})`,
-            );
-            embed.setFooter(`${prefix}server`);
-
-            await message.channel.send(embed);
+            if (result instanceof Promise) {
+                await result;
+            }
+        } catch (error) {
+            console.error(error);
+            await message.reply('There was an error');
         }
     }
 });
