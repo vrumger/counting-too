@@ -47,20 +47,15 @@ client.on('message', async message => {
             channelId: message.channel.id,
         });
 
-        if (!channel || channel.lastNumber === 0) {
+        if (!channel) {
+            return;
+        }
+
+        if (channel.lastNumber === 0) {
             if (number === 1) {
-                if (!channel) {
-                    await new Channel({
-                        guildId: message.guild.id,
-                        channelId: message.channel.id,
-                        userId: message.author.id,
-                        lastNumber: 1,
-                    }).save();
-                } else {
-                    channel.userId = message.author.id;
-                    channel.lastNumber = 1;
-                    await channel.save();
-                }
+                channel.userId = message.author.id;
+                channel.lastNumber = 1;
+                await channel.save();
 
                 await message.react('✅');
                 await Save.addSave(message.guild.id, message.author.id);
