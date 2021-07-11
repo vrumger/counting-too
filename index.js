@@ -185,7 +185,7 @@ client.on('message', async message => {
             }
         } catch (error) {
             console.error(error);
-            await message.reply('There was an error');
+            await message.reply('there was an error.');
         }
     }
 });
