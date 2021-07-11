@@ -63,24 +63,6 @@ client.on('message', async message => {
                 return;
             }
 
-            if (await Save.hasSaves(message.guild.id, message.author.id)) {
-                await Save.useSave(message.guild.id, message.author.id);
-
-                const saves = await Save.getSaves(
-                    message.guild.id,
-                    message.author.id,
-                );
-                await message.channel.send(
-                    formatSaveMessage(
-                        message.author.id,
-                        saves,
-                        channel.lastNumber,
-                    ),
-                );
-
-                return;
-            }
-
             const lastNumber = channel?.lastNumber ?? 0;
 
             channel.userId = null;
