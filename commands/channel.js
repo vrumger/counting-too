@@ -2,7 +2,7 @@ const Channel = require('../models/channel');
 
 module.exports = {
     name: 'channel',
-    description: '',
+    description: 'Configure the bot to listen in a specific channel',
     async execute(message) {
         if (!message.member.hasPermission('MANAGE_CHANNELS')) {
             await message.reply("you don't have permission to do this.");
