@@ -1,3 +1,4 @@
+const timeago = require('timeago.js');
 const Discord = require('discord.js');
 const Channel = require('../models/channel');
 
@@ -26,7 +27,7 @@ module.exports = {
         );
         embed.addField(
             'High score',
-            `${channel.highScore} (${channel.highScoreDate.toDateString()})`,
+            `${channel.highScore} (${timeago.format(channel.highScoreDate)})`,
         );
         embed.setFooter(`${message.client.prefix}server`);
 
