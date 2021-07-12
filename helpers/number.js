@@ -6,6 +6,11 @@ const formatSaveMessage = (userId, saves, lastNumber) =>
         2,
     )}** left. The next number is **${lastNumber + 1}**`;
 
+const formatGuildSaveMessage = (userId, saves, lastNumber) =>
+    `⚠️ <@${userId}> You have used **1** of the guild saves. There are **${saves.toFixed(
+        3,
+    )}** left. The next number is **${lastNumber + 1}**`;
+
 module.exports = async (message, number) => {
     const channel = await Channel.findOne({
         guildId: message.guild.id,
@@ -20,6 +25,7 @@ module.exports = async (message, number) => {
         if (number === 1) {
             channel.userId = message.author.id;
             channel.lastNumber = 1;
+            channel.addSave();
             await channel.save();
 
             await message.react('✅');
@@ -54,6 +60,17 @@ module.exports = async (message, number) => {
             );
 
             return;
+        } else if (channel.hasSaves()) {
+            await channel.useSave();
+            await message.channel.send(
+                formatGuildSaveMessage(
+                    message.author.id,
+                    channel.guildSaves,
+                    channel.lastNumber,
+                ),
+            );
+
+            return;
         }
 
         const { lastNumber } = channel;
@@ -81,6 +98,17 @@ module.exports = async (message, number) => {
             );
 
             return;
+        } else if (channel.hasSaves()) {
+            await channel.useSave();
+            await message.channel.send(
+                formatGuildSaveMessage(
+                    message.author.id,
+                    channel.guildSaves,
+                    channel.lastNumber,
+                ),
+            );
+
+            return;
         }
 
         const { lastNumber } = channel;
@@ -99,6 +127,7 @@ module.exports = async (message, number) => {
 
     channel.userId = message.author.id;
     channel.lastNumber = number;
+    channel.addSave();
     await channel.save();
     await message.react(number === 100 ? '💯' : '✅');
 

@@ -24,9 +24,30 @@ const channelSchema = new mongoose.Schema(
         highScoreDate: {
             type: Date,
         },
+        guildSaves: {
+            type: Number,
+            default: 0,
+        },
     },
     { timestamps: true },
 );
+
+channelSchema.method('hasSaves', function () {
+    return this.guildSaves >= 1;
+});
+
+channelSchema.method('useSave', async function () {
+    if (this.guildSaves < 1) {
+        throw new Error('Not enough saves');
+    }
+
+    this.guildSaves -= 1;
+    await this.save();
+});
+
+channelSchema.method('addSave', function () {
+    this.guildSaves += 0.002;
+});
 
 channelSchema.pre('save', function (next) {
     if (!this.highScore || this.lastNumber > this.highScore) {

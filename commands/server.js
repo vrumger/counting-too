@@ -19,6 +19,7 @@ module.exports = {
         embed.setColor('#8965d6');
         embed.setTitle(`Info for ${message.guild.name}`);
         embed.addField('Current number', channel.lastNumber);
+        embed.addField('Guild saves', channel.guildSaves.toFixed(3));
         embed.addField(
             'Last counted by',
             channel.userId ? `<@${channel.userId}>` : 'N/A',
