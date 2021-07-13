@@ -13,6 +13,9 @@ const channelSchema = new mongoose.Schema(
         userId: {
             type: String,
         },
+        messageId: {
+            type: String,
+        },
         lastNumber: {
             type: Number,
             required: true,

@@ -1,14 +1,17 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
 const Discord = require('discord.js');
-const numberHandler = require('./helpers/number');
+const deleteHandler = require('./handlers/delete');
+const numbersHandler = require('./handlers/numbers');
 const Queue = require('./helpers/queue');
 
 require('dotenv').config();
 
 const prefix = process.env.BOT_PREFIX || '2!';
 const queue = new Queue();
-const client = new Discord.Client();
+const client = new Discord.Client({
+    partials: ['MESSAGE'],
+});
 
 client.prefix = prefix;
 client.queue = queue;
@@ -27,6 +30,8 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}`);
 });
 
+client.on('messageDelete', deleteHandler);
+
 client.on('message', async message => {
     if (message.author.bot) return;
 
@@ -39,7 +44,9 @@ client.on('message', async message => {
     const number = /^\d+$/.test(words[0]) ? Number(words[0]) : null;
 
     if (number) {
-        await queue.add(message.guild.id, () => numberHandler(message, number));
+        await queue.add(message.guild.id, () =>
+            numbersHandler(message, number),
+        );
         return;
     }
 

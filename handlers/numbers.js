@@ -24,6 +24,7 @@ module.exports = async (message, number) => {
     if (channel.lastNumber === 0) {
         if (number === 1) {
             channel.userId = message.author.id;
+            channel.messageId = message.id;
             channel.lastNumber = 1;
             channel.addSave();
             await channel.save();
@@ -37,6 +38,7 @@ module.exports = async (message, number) => {
         const lastNumber = channel?.lastNumber ?? 0;
 
         channel.userId = null;
+        channel.messageId = message.id;
         channel.lastNumber = 0;
         await message.react('⚠️');
         await message.channel.send(
@@ -76,6 +78,7 @@ module.exports = async (message, number) => {
         const { lastNumber } = channel;
 
         channel.userId = null;
+        channel.messageId = null;
         channel.lastNumber = 0;
         await channel.save();
         await message.react('❌');
@@ -114,6 +117,7 @@ module.exports = async (message, number) => {
         const { lastNumber } = channel;
 
         channel.userId = null;
+        channel.messageId = null;
         channel.lastNumber = 0;
         await channel.save();
         await message.react('❌');
@@ -126,6 +130,7 @@ module.exports = async (message, number) => {
     }
 
     channel.userId = message.author.id;
+    channel.messageId = message.id;
     channel.lastNumber = number;
     channel.addSave();
     await channel.save();
