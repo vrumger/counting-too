@@ -41,7 +41,7 @@ client.on('message', async message => {
     }
 
     const words = message.content.split(' ');
-    const number = /^\d+$/.test(words[0]) ? Number(words[0]) : null;
+    const number = /^[1-9][0-9]+$/.test(words[0]) ? Number(words[0]) : null;
 
     if (number) {
         await queue.add(message.guild.id, () =>
