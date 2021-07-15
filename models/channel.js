@@ -52,6 +52,10 @@ channelSchema.method('addSave', function () {
     this.guildSaves += 0.002;
 });
 
+channelSchema.method('isHighScore', function (number) {
+    return number === this.highScore;
+});
+
 channelSchema.pre('save', function (next) {
     if (!this.highScore || this.lastNumber > this.highScore) {
         this.set({

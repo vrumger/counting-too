@@ -1,6 +1,14 @@
 const Channel = require('../models/channel');
 const Save = require('../models/save');
 
+const reactions = {
+    normal: '✅',
+    highScore: '☑️',
+    oneHundred: '💯',
+    x: '',
+    warning: '⚠️',
+};
+
 const formatSaveMessage = (userId, saves, lastNumber) =>
     `⚠️ <@${userId}> You have used **1** of your saves. You have **${saves.toFixed(
         2,
@@ -29,7 +37,11 @@ module.exports = async (message, number) => {
             channel.addSave();
             await channel.save();
 
-            await message.react('✅');
+            await message.react(
+                channel.isHighScore(number)
+                    ? reactions.highScore
+                    : reactions.normal,
+            );
             await Save.addSave(message.guild.id, message.author.id);
 
             return;
@@ -40,7 +52,7 @@ module.exports = async (message, number) => {
         channel.userId = null;
         channel.messageId = message.id;
         channel.lastNumber = 0;
-        await message.react('⚠️');
+        await message.react(reactions.warning);
         await message.channel.send(
             `Incorrect number! The next number is \`${
                 lastNumber + 1
@@ -81,7 +93,7 @@ module.exports = async (message, number) => {
         channel.messageId = null;
         channel.lastNumber = 0;
         await channel.save();
-        await message.react('❌');
+        await message.react(reactions.x);
         await message.reply(
             `RUINED IT AT **${lastNumber}**!! Next number is **1**. **Wrong number.**`,
         );
@@ -120,7 +132,7 @@ module.exports = async (message, number) => {
         channel.messageId = null;
         channel.lastNumber = 0;
         await channel.save();
-        await message.react('❌');
+        await message.react(reactions.x);
         await message.reply(
             `RUINED IT AT **${
                 lastNumber + 1
@@ -134,7 +146,13 @@ module.exports = async (message, number) => {
     channel.lastNumber = number;
     channel.addSave();
     await channel.save();
-    await message.react(number === 100 ? '💯' : '✅');
+    await message.react(
+        number === 100
+            ? reactions.oneHundred
+            : channel.isHighScore(number)
+            ? reactions.highScore
+            : reactions.normal,
+    );
 
     await Save.addSave(message.guild.id, message.author.id);
 };
