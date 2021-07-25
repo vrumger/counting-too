@@ -26,8 +26,10 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
-client.on('ready', () => {
+client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}`);
+
+    await client.user.setActivity('numbers', { type: 'PLAYING' });
 });
 
 client.on('messageDelete', deleteHandler);
