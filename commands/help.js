@@ -28,14 +28,21 @@ module.exports = {
         const embed = new Discord.MessageEmbed();
 
         embed.setColor('#8965d6');
-        embed.setTitle('Commands list');
-        embed.addFields(
-            ...commands.map(command => ({
-                name: `\`${message.client.prefix}${command.name}\``,
-                value: command.description,
-            })),
+        embed.addField(
+            'Commands list',
+            commands.map(
+                command =>
+                    `\`${message.client.prefix}${command.name}\` - ${command.description}`,
+            ),
         );
         embed.setFooter(`${message.client.prefix}help`);
+
+        if (process.env.CLIENT_ID) {
+            embed.addField(
+                'Invite',
+                `[Invite the bot to your own server!](https://discord.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&scope=bot)`,
+            );
+        }
 
         await message.channel.send(embed);
     },
