@@ -5,7 +5,7 @@ const reactions = {
     normal: '✅',
     highScore: '☑️',
     oneHundred: '💯',
-    x: '',
+    x: '❌',
     warning: '⚠️',
 };
 
