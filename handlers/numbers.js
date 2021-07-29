@@ -69,6 +69,7 @@ module.exports = async (message, number) => {
                 message.guild.id,
                 message.author.id,
             );
+            await message.react(reactions.warning);
             await message.channel.send(
                 formatSaveMessage(message.author.id, saves, channel.lastNumber),
             );
@@ -76,6 +77,7 @@ module.exports = async (message, number) => {
             return;
         } else if (channel.hasSaves()) {
             await channel.useSave();
+            await message.react(reactions.warning);
             await message.channel.send(
                 formatGuildSaveMessage(
                     message.author.id,
@@ -108,6 +110,7 @@ module.exports = async (message, number) => {
                 message.guild.id,
                 message.author.id,
             );
+            await message.react(reactions.warning);
             await message.channel.send(
                 formatSaveMessage(message.author.id, saves, channel.lastNumber),
             );
@@ -115,6 +118,7 @@ module.exports = async (message, number) => {
             return;
         } else if (channel.hasSaves()) {
             await channel.useSave();
+            await message.react(reactions.warning);
             await message.channel.send(
                 formatGuildSaveMessage(
                     message.author.id,
