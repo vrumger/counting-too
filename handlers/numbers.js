@@ -1,12 +1,14 @@
 const Channel = require('../models/channel');
 const Save = require('../models/save');
 
+const lastNumbers = new Map();
 const reactions = {
     normal: '✅',
     highScore: '☑️',
     oneHundred: '💯',
     x: '❌',
     warning: '⚠️',
+    thinking: '🤔',
 };
 
 const formatSaveMessage = (userId, saves, lastNumber) =>
@@ -20,6 +22,17 @@ const formatGuildSaveMessage = (userId, saves, lastNumber) =>
     )}** left. The next number is **${lastNumber + 1}**`;
 
 module.exports = async (message, number) => {
+    if (
+        lastNumbers.has(message.guild.id) &&
+        message.createdTimestamp - lastNumbers.get(message.guild.id) < 500
+    ) {
+        await message.react(reactions.thinking);
+        lastNumbers.set(message.guild.id, message.createdTimestamp);
+        return;
+    }
+
+    lastNumbers.set(message.guild.id, message.createdTimestamp);
+
     const channel = await Channel.findOne({
         guildId: message.guild.id,
         channelId: message.channel.id,
