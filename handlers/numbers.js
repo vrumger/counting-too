@@ -27,7 +27,7 @@ module.exports = async (message, number) => {
 
         if (
             number === lastNumber &&
-            message.createdTimestamp - timestamp < 100
+            message.createdTimestamp - timestamp < 1000
         ) {
             await message.react(reactions.thinking);
             lastNumbers.set(message.guild.id, [
