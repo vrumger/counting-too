@@ -38,13 +38,15 @@ client.on('message', async message => {
     if (message.author.bot) return;
 
     if (message.guild === null) {
+        const inviteLink = process.env.CLIENT_ID
+            ? `\nInvite the bot to your server: https://discord.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&scope=bot\n`
+            : '';
         await message.reply(`Count to infinity, one number at a time. Earn saves for yourself and everyone else in the server. Saves are automatically given when you count.
 
 100 numbers = 1 save for yourself
 500 numbers = 1 save for the server
-
-The bot is even open source! Check it out for yourself:
-<https://github.com/AndrewLaneX/counting-too>`);
+${inviteLink}
+The bot is even open source! Check it out for yourself: <https://github.com/AndrewLaneX/counting-too>`);
         return;
     }
 
