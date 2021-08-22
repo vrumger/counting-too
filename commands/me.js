@@ -17,22 +17,18 @@ module.exports = {
 
         let user = message.author;
 
-        if (
-            args.length > 0 &&
-            args[0].startsWith('<@') &&
-            args[0].endsWith('>')
-        ) {
-            let userId = args[0].slice(2, -1);
+        if (args.length > 0) {
+            const match = args[0].match(/^(?:<@!?(\d+)>|(\d+))$/);
 
-            if (userId.startsWith('!')) {
-                userId = userId.slice(1);
-            }
+            if (match) {
+                const userId = match[1] ?? match[2];
 
-            user = message.client.users.cache.get(userId);
+                user = message.client.users.cache.get(userId);
 
-            if (!user) {
-                await message.reply('user not found.');
-                return;
+                if (!user) {
+                    await message.reply('user not found.');
+                    return;
+                }
             }
         }
 
