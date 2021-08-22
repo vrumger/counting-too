@@ -1,4 +1,11 @@
+const { execSync } = require('child_process');
+const prettyMs = require('pretty-ms');
 const Discord = require('discord.js');
+
+const commitHash = execSync(
+    'echo "$(git rev-parse --short HEAD)$(git diff-index --quiet HEAD || echo "*")"',
+    { encoding: 'utf8' },
+).trim();
 
 module.exports = {
     name: 'help',
@@ -26,6 +33,9 @@ module.exports = {
 
         const commands = message.client.commands.array();
         const embed = new Discord.MessageEmbed();
+        const uptime = prettyMs(process.uptime() * 1000, {
+            secondsDecimalDigits: 0,
+        });
 
         embed.setColor('#8965d6');
         embed.addField(
@@ -35,7 +45,9 @@ module.exports = {
                     `\`${message.client.prefix}${command.name}\` - ${command.description}`,
             ),
         );
-        embed.setFooter(`${message.client.prefix}help`);
+        embed.setFooter(
+            `${message.client.prefix}help | Commit: ${commitHash} | Uptime: ${uptime}`,
+        );
 
         if (process.env.CLIENT_ID) {
             embed.addField(
