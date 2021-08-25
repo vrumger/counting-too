@@ -15,7 +15,7 @@ module.exports = {
             const command = message.client.commands.get(args[0]);
             let response = 'Command not found';
 
-            if (command) {
+            if (command && !command.hidden) {
                 response = new Discord.MessageEmbed();
 
                 response.setColor('#8965d6');
@@ -31,7 +31,7 @@ module.exports = {
             return;
         }
 
-        const commands = message.client.commands.array();
+        const commands = message.client.commands.array().filter(c => !c.hidden);
         const embed = new Discord.MessageEmbed();
         const uptime = prettyMs(process.uptime() * 1000, {
             secondsDecimalDigits: 0,

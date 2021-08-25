@@ -24,6 +24,8 @@ const commandFiles = fs
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command);
+
+    command.aliases?.map(alias => client.commands.set(alias, command));
 }
 
 client.on('ready', async () => {
