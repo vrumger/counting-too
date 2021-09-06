@@ -8,7 +8,6 @@ module.exports = {
     async execute(message, args) {
         const channel = await Channel.findOne({
             guildId: message.guild.id,
-            channelId: message.channel.id,
         });
 
         if (!channel) {
