@@ -1,0 +1,22 @@
+const Discord = require('discord.js');
+
+module.exports = {
+    name: 'rules',
+    aliases: ['instructions'],
+    hidden: true,
+    async execute(message) {
+        const embed = new Discord.MessageEmbed();
+
+        embed.setTitle('Rules for the game.');
+        embed.setDescription(
+            [
+                'Send the number following the previous message to count to infinity!',
+                'However, don't send the wrong number, or send two numbers in a row, or you break the round!',
+                'You can earn saves in case there is a mess up, but be careful!',
+            ].join('\n'),
+        );
+        embed.setFooter(`${message.client.prefix}help`);
+
+        await message.channel.send(embed);
+    },
+};
