@@ -52,7 +52,7 @@ The bot is even open source! Check it out for yourself: <https://github.com/Andr
         return;
     }
 
-    const words = message.content.split(' ');
+    const words = message.content.split(/\s/);
     const number = /^[1-9][0-9]*$/.test(words[0]) ? Number(words[0]) : null;
 
     if (number) {
