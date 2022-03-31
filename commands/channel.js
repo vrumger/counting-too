@@ -4,7 +4,7 @@ module.exports = {
     name: 'channel',
     description: 'Configure the bot to listen in a specific channel',
     async execute(message) {
-        if (!message.member.hasPermission('MANAGE_CHANNELS')) {
+        if (!message.member.permissions.has('MANAGE_CHANNELS')) {
             await message.reply("you don't have permission to do this.");
             return;
         }

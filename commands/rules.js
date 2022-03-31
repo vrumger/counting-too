@@ -16,8 +16,8 @@ module.exports = {
 
         embed.setTitle('Rules of the game');
         embed.setDescription(description);
-        embed.setFooter(`${message.client.prefix}rules`);
+        embed.setFooter({ text: `${message.client.prefix}rules` });
 
-        await message.channel.send(embed);
+        await message.channel.send({ embeds: [embed] });
     },
 };

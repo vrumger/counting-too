@@ -45,10 +45,11 @@ module.exports = {
         const embed = new Discord.MessageEmbed();
 
         embed.setColor('#8965d6');
+        embed.setThumbnail(user.avatarURL());
         embed.setTitle(`Info for ${user.tag}`);
         embed.addField('Saves', save.saves.toFixed(2));
-        embed.setFooter(`${message.client.prefix}me`);
+        embed.setFooter({ text: `${message.client.prefix}me` });
 
-        await message.channel.send(embed);
+        await message.channel.send({ embeds: [embed] });
     },
 };

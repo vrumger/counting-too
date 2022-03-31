@@ -15,8 +15,8 @@ module.exports = {
                 '[Top.gg](https://top.gg/bot/862833445834063902)',
             ].join('\n'),
         );
-        embed.setFooter(`${message.client.prefix}upvote`);
+        embed.setFooter({ text: `${message.client.prefix}upvote` });
 
-        await message.channel.send(embed);
+        await message.channel.send({ embeds: [embed] });
     },
 };

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const mongoose = require('mongoose');
-const Discord = require('discord.js');
+const { Client, Collection, Intents } = require('discord.js');
 const deleteHandler = require('./handlers/delete');
 const numbersHandler = require('./handlers/numbers');
 const Queue = require('./helpers/queue');
@@ -9,13 +9,18 @@ require('dotenv').config();
 
 const prefix = process.env.BOT_PREFIX || '2!';
 const queue = new Queue();
-const client = new Discord.Client({
-    partials: ['MESSAGE'],
+const client = new Client({
+    intents: [
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+    ],
+    partials: ['CHANNEL', 'MESSAGE'],
 });
 
 client.prefix = prefix;
 client.queue = queue;
-client.commands = new Discord.Collection();
+client.commands = new Collection();
 
 const commandFiles = fs
     .readdirSync(__dirname + '/commands')
@@ -36,7 +41,7 @@ client.on('ready', async () => {
 
 client.on('messageDelete', deleteHandler);
 
-client.on('message', async message => {
+client.on('messageCreate', async message => {
     if (message.author.bot) return;
 
     if (message.guild === null) {
@@ -48,7 +53,7 @@ client.on('message', async message => {
 100 numbers = 1 save for yourself
 500 numbers = 1 save for the server
 ${inviteLink}
-The bot is even open source! Check it out for yourself: <https://github.com/AndrewLaneX/counting-too>`);
+The bot is even open source! Check it out for yourself: <https://github.com/vrumger/counting-too>`);
         return;
     }
 

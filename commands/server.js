@@ -18,7 +18,7 @@ module.exports = {
 
         embed.setColor('#8965d6');
         embed.setTitle(`Info for ${message.guild.name}`);
-        embed.addField('Current number', channel.lastNumber);
+        embed.addField('Current number', channel.lastNumber.toString());
         embed.addField('Guild saves', channel.guildSaves.toFixed(3));
         embed.addField(
             'Last counted by',
@@ -28,8 +28,8 @@ module.exports = {
             'High score',
             `${channel.highScore} (${timeago.format(channel.highScoreDate)})`,
         );
-        embed.setFooter(`${message.client.prefix}server`);
+        embed.setFooter({ text: `${message.client.prefix}server` });
 
-        await message.channel.send(embed);
+        await message.channel.send({ embeds: [embed] });
     },
 };

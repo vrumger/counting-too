@@ -31,7 +31,9 @@ module.exports = {
             return;
         }
 
-        const commands = message.client.commands.array().filter(c => !c.hidden);
+        const commands = [...message.client.commands.values()].filter(
+            c => !c.hidden,
+        );
         const embed = new Discord.MessageEmbed();
         const uptime = prettyMs(process.uptime() * 1000, {
             secondsDecimalDigits: 0,
@@ -40,14 +42,16 @@ module.exports = {
         embed.setColor('#8965d6');
         embed.addField(
             'Commands list',
-            commands.map(
-                command =>
-                    `\`${message.client.prefix}${command.name}\` - ${command.description}`,
-            ),
+            commands
+                .map(
+                    command =>
+                        `\`${message.client.prefix}${command.name}\` - ${command.description}`,
+                )
+                .join('\n'),
         );
-        embed.setFooter(
-            `${message.client.prefix}help | Commit: ${commitHash} | Uptime: ${uptime}`,
-        );
+        embed.setFooter({
+            text: `${message.client.prefix}help | Commit: ${commitHash} | Uptime: ${uptime}`,
+        });
 
         if (process.env.CLIENT_ID) {
             embed.addField(
@@ -56,6 +60,6 @@ module.exports = {
             );
         }
 
-        await message.channel.send(embed);
+        await message.channel.send({ embeds: [embed] });
     },
 };
