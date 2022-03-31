@@ -8,16 +8,16 @@
     "dev": "nodemon index.js"
   },
   "keywords": [],
-  "author": "Andrew Lane <contact@lungers.com>",
+  "author": "Avrumy Lunger <contact@lungers.com>",
   "license": "MIT",
   "dependencies": {
     "discord.js": "^12.5.3",
-    "dotenv": "^10.0.0",
-    "mongoose": "^5.13.2",
+    "dotenv": "^16.0.0",
+    "mongoose": "^6.2.9",
     "pretty-ms": "^7.0.1",
     "timeago.js": "^4.0.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.10"
+    "nodemon": "^2.0.15"
   }
 }

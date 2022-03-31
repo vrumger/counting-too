@@ -85,15 +85,8 @@ The bot is even open source! Check it out for yourself: <https://github.com/Andr
     }
 });
 
-mongoose
-    .connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-        useFindAndModify: true,
-    })
-    .then(() => {
-        console.log('Connected to MongoDB');
+mongoose.connect(process.env.MONGO_URI).then(() => {
+    console.log('Connected to MongoDB');
 
-        client.login(process.env.BOT_TOKEN);
-    });
+    client.login(process.env.BOT_TOKEN);
+});
