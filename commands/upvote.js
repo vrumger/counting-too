@@ -2,9 +2,8 @@ const Discord = require('discord.js');
 
 module.exports = {
     name: 'upvote',
-    aliases: ['vote'],
-    hidden: true,
-    async execute(message) {
+    description: 'Links to upvote the bot',
+    async execute(interaction) {
         const embed = new Discord.MessageEmbed();
 
         embed.setTitle('Upvote the bot!');
@@ -15,8 +14,10 @@ module.exports = {
                 '[Top.gg](https://top.gg/bot/862833445834063902)',
             ].join('\n'),
         );
-        embed.setFooter({ text: `${message.client.prefix}upvote` });
 
-        await message.channel.send({ embeds: [embed] });
+        await interaction.reply({
+            embeds: [embed],
+            ephemeral: true,
+        });
     },
 };

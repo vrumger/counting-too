@@ -5,34 +5,27 @@ const Save = require('../models/save');
 module.exports = {
     name: 'me',
     description: 'Get information about yourself',
-    async execute(message, args) {
+    options: [
+        {
+            name: 'user',
+            description: 'Get info about a yourself or a different user',
+            type: 'USER',
+            required: false,
+        },
+    ],
+    async execute(interaction) {
         const channel = await Channel.findOne({
-            guildId: message.guild.id,
+            guildId: interaction.guildId,
         });
 
         if (!channel) {
             return;
         }
 
-        let user = message.author;
-
-        if (args.length > 0) {
-            const match = args[0].match(/^(?:<@!?(\d+)>|(\d+))$/);
-
-            if (match) {
-                const userId = match[1] ?? match[2];
-
-                user = message.client.users.cache.get(userId);
-
-                if (!user) {
-                    await message.reply('user not found.');
-                    return;
-                }
-            }
-        }
+        const user = interaction.options.getUser('user') ?? interaction.user;
 
         let save = await Save.findOne({
-            guildId: message.guild.id,
+            guildId: interaction.guildId,
             userId: user.id,
         });
 
@@ -48,8 +41,10 @@ module.exports = {
         embed.setThumbnail(user.avatarURL());
         embed.setTitle(`Info for ${user.tag}`);
         embed.addField('Saves', save.saves.toFixed(2));
-        embed.setFooter({ text: `${message.client.prefix}me` });
 
-        await message.channel.send({ embeds: [embed] });
+        await interaction.reply({
+            embeds: [embed],
+            ephemeral: true,
+        });
     },
 };

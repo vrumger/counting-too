@@ -11,13 +11,15 @@ Good luck!`;
 module.exports = {
     name: 'rules',
     description: 'Read the rules of the game',
-    async execute(message) {
+    async execute(interaction) {
         const embed = new Discord.MessageEmbed();
 
         embed.setTitle('Rules of the game');
         embed.setDescription(description);
-        embed.setFooter({ text: `${message.client.prefix}rules` });
 
-        await message.channel.send({ embeds: [embed] });
+        await interaction.reply({
+            embeds: [embed],
+            ephemeral: true,
+        });
     },
 };

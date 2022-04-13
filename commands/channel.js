@@ -1,29 +1,33 @@
 const Channel = require('../models/channel');
 
 module.exports = {
-    name: 'channel',
-    description: 'Configure the bot to listen in a specific channel',
-    async execute(message) {
-        if (!message.member.permissions.has('MANAGE_CHANNELS')) {
-            await message.reply("you don't have permission to do this.");
+    name: 'set-channel',
+    description: 'Configure the bot to listen in this channel',
+    async execute(interaction) {
+        if (!interaction.memberPermissions.has('MANAGE_CHANNELS')) {
+            await interaction.reply({
+                content: "you don't have permission to do this.",
+                ephemeral: true,
+            });
             return;
         }
 
         let channel = await Channel.findOne({
-            guildId: message.guild.id,
+            guildId: interaction.guildId,
         });
 
         if (!channel) {
             channel = new Channel({
-                guildId: message.guild.id,
+                guildId: interaction.guildId,
             });
         }
 
-        channel.channelId = message.channel.id;
+        channel.channelId = interaction.channelId;
         await channel.save();
 
-        await message.reply(
-            'the counting channel has been updated to this channel.',
-        );
+        await interaction.reply({
+            content: 'the counting channel has been updated to this channel.',
+            ephemeral: true,
+        });
     },
 };

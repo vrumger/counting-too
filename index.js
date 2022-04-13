@@ -7,8 +7,8 @@ const Queue = require('./helpers/queue');
 
 require('dotenv').config();
 
-const prefix = process.env.BOT_PREFIX || '2!';
 const queue = new Queue();
+const commands = new Collection();
 const client = new Client({
     intents: [
         Intents.FLAGS.DIRECT_MESSAGES,
@@ -18,25 +18,59 @@ const client = new Client({
     partials: ['CHANNEL', 'MESSAGE'],
 });
 
-client.prefix = prefix;
-client.queue = queue;
-client.commands = new Collection();
-
 const commandFiles = fs
     .readdirSync(__dirname + '/commands')
     .filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command);
-
-    command.aliases?.map(alias => client.commands.set(alias, command));
+    commands.set(command.name, command);
 }
 
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}`);
 
     await client.user.setActivity('numbers', { type: 'PLAYING' });
+
+    const guild = process.env.DEV_GUILD_ID
+        ? client.guilds.cache.get(process.env.DEV_GUILD_ID)
+        : null;
+    const commandManager = guild ? guild.commands : client.application.commands;
+
+    commands.forEach(command => {
+        commandManager.create({
+            name: command.name,
+            description: command.description,
+            options: command.options,
+        });
+    });
+});
+
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) {
+        return;
+    }
+
+    const { commandName } = interaction;
+
+    if (!commands.has(commandName)) {
+        return;
+    }
+
+    try {
+        const handler = commands.get(commandName);
+        const result = handler.execute(interaction);
+
+        if (result instanceof Promise) {
+            await result;
+        }
+    } catch (error) {
+        console.error(error);
+        await interaction.reply({
+            content: 'there was an error.',
+            ephemeral: true,
+        });
+    }
 });
 
 client.on('messageDelete', deleteHandler);
@@ -65,28 +99,6 @@ The bot is even open source! Check it out for yourself: <https://github.com/vrum
             numbersHandler(message, number),
         );
         return;
-    }
-
-    let command = words[0].toLowerCase();
-    if (command.startsWith(prefix)) {
-        command = command.slice(prefix.length);
-        const args = words.slice(1);
-
-        if (!client.commands.has(command)) {
-            return;
-        }
-
-        try {
-            const handler = client.commands.get(command);
-            const result = handler.execute(message, args);
-
-            if (result instanceof Promise) {
-                await result;
-            }
-        } catch (error) {
-            console.error(error);
-            await message.reply('there was an error.');
-        }
     }
 });
 
