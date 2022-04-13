@@ -80,7 +80,7 @@ client.on('messageCreate', async message => {
 
     if (message.guild === null) {
         const inviteLink = process.env.CLIENT_ID
-            ? `\nInvite the bot to your server: https://discord.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&scope=bot\n`
+            ? `\nInvite the bot to your server: https://discord.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&scope=bot%20applications.commands\n`
             : '';
         await message.reply(`Count to infinity, one number at a time. Earn saves for yourself and everyone else in the server. Saves are automatically given when you count.
 
