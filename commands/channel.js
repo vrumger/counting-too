@@ -4,7 +4,11 @@ module.exports = {
     name: 'set-channel',
     description: 'Configure the bot to listen in this channel',
     async execute(interaction) {
-        if (!interaction.memberPermissions.has('MANAGE_CHANNELS')) {
+        if (
+            !(
+                interaction.memberPermissions || interaction.member.permissions
+            ).has('MANAGE_CHANNELS')
+        ) {
             await interaction.reply({
                 content: "you don't have permission to do this.",
                 ephemeral: true,

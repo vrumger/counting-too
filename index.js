@@ -7,6 +7,7 @@ const Queue = require('./helpers/queue');
 
 require('dotenv').config();
 
+const prefix = process.env.BOT_PREFIX || '2!';
 const queue = new Queue();
 const commands = new Collection();
 const client = new Client({
@@ -99,6 +100,28 @@ The bot is even open source! Check it out for yourself: <https://github.com/vrum
             numbersHandler(message, number),
         );
         return;
+    }
+
+    let command = words[0].toLowerCase();
+    if (command.startsWith(prefix)) {
+        command = command.slice(prefix.length);
+        const args = words.slice(1);
+
+        if (!commands.has(command)) {
+            return;
+        }
+
+        try {
+            const handler = commands.get(command);
+            const result = handler.execute(message, args);
+
+            if (result instanceof Promise) {
+                await result;
+            }
+        } catch (error) {
+            console.error(error);
+            await message.reply('there was an error.');
+        }
     }
 });
 

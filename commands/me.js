@@ -22,7 +22,10 @@ module.exports = {
             return;
         }
 
-        const user = interaction.options.getUser('user') ?? interaction.user;
+        const user =
+            interaction.options?.getUser('user') ??
+            interaction.user ??
+            interaction.author;
 
         let save = await Save.findOne({
             guildId: interaction.guildId,
