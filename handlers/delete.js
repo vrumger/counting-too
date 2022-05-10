@@ -11,9 +11,13 @@ module.exports = async message => {
         return;
     }
 
+    const lastNumber = channel.getLastNumber();
+
     await message.channel.send(
-        `<@${channel.userId}> deleted their count of \`${
-            channel.lastNumber
-        }\`. The next number is \`${channel.lastNumber + 1}\`.`,
+        `<@${
+            channel.userId
+        }> deleted their count of \`${lastNumber}\`. The next number is \`${
+            lastNumber + 1
+        }\`.`,
     );
 };

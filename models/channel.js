@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const xor = require('../helpers/xor');
 
 const channelSchema = new mongoose.Schema(
     {
@@ -16,16 +17,24 @@ const channelSchema = new mongoose.Schema(
         messageId: {
             type: String,
         },
-        lastNumber: {
-            type: Number,
+        // keep for backwards-compatibility
+        lastNumber: Number,
+        lastNumberXor: {
+            type: String,
             required: true,
-            default: 0,
+            default: xor.encrypt(0),
         },
-        highScore: {
-            type: Number,
+        // keep for backwards-compatibility
+        highScore: Number,
+        highScoreXor: {
+            type: String,
+            required: true,
+            default: xor.encrypt(0),
         },
         highScoreDate: {
             type: Date,
+            required: true,
+            default: () => new Date(),
         },
         guildSaves: {
             type: Number,
@@ -53,18 +62,54 @@ channelSchema.method('addSave', function () {
 });
 
 channelSchema.method('isHighScore', function (number) {
-    return number === this.highScore;
+    return number === this.getHighScore();
 });
 
-channelSchema.pre('save', function (next) {
-    if (!this.highScore || this.lastNumber > this.highScore) {
-        this.set({
-            highScore: this.lastNumber,
-            highScoreDate: new Date(),
-        });
+channelSchema.method('getLastNumber', function () {
+    if (this.lastNumber) {
+        return this.lastNumber;
     }
 
-    next();
+    if (!this._lastNumber) {
+        this._lastNumber = this.lastNumberXor
+            ? xor.decrypt(this.lastNumberXor)
+            : 0;
+    }
+
+    return this._lastNumber;
+});
+
+channelSchema.method('getHighScore', function () {
+    if (this.highScore) {
+        return this.highScore;
+    }
+
+    if (!this._highScore) {
+        this._highScore = this.highScoreXor
+            ? xor.decrypt(this.highScoreXor)
+            : 0;
+    }
+
+    return this._highScore;
+});
+
+channelSchema.method('setLastNumber', function (number) {
+    const highScore = this.getHighScore();
+    const lastNumberXor = xor.encrypt(number);
+
+    const set = {};
+
+    if (number > highScore) {
+        set.highScore = undefined;
+        set.highScoreXor = lastNumberXor;
+        set.highScoreDate = new Date();
+        this._highScore = number;
+    }
+
+    set.lastNumber = undefined;
+    set.lastNumberXor = lastNumberXor;
+    this._lastNumber = number;
+    this.set(set);
 });
 
 const Channel = mongoose.model('Channel', channelSchema);

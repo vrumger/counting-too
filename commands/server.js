@@ -18,7 +18,7 @@ module.exports = {
 
         embed.setColor('#8965d6');
         embed.setTitle(`Info for ${interaction.guild.name}`);
-        embed.addField('Current number', channel.lastNumber.toString());
+        embed.addField('Current number', channel.getLastNumber().toString());
         embed.addField('Guild saves', channel.guildSaves.toFixed(3));
         embed.addField(
             'Last counted by',
@@ -26,7 +26,9 @@ module.exports = {
         );
         embed.addField(
             'High score',
-            `${channel.highScore} (${timeago.format(channel.highScoreDate)})`,
+            `${channel.getHighScore()} (${timeago.format(
+                channel.highScoreDate,
+            )})`,
         );
 
         await interaction.reply({

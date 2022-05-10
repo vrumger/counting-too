@@ -49,11 +49,11 @@ module.exports = async (message, number) => {
         return;
     }
 
-    if (channel.lastNumber === 0) {
+    if (channel.getLastNumber() === 0) {
         if (number === 1) {
             channel.userId = message.author.id;
             channel.messageId = message.id;
-            channel.lastNumber = 1;
+            channel.setLastNumber(1);
             channel.addSave();
             await channel.save();
 
@@ -67,21 +67,19 @@ module.exports = async (message, number) => {
             return;
         }
 
-        const lastNumber = channel?.lastNumber ?? 0;
-
         channel.userId = null;
         channel.messageId = message.id;
-        channel.lastNumber = 0;
+        channel.setLastNumber(0);
         await message.react(reactions.warning);
         await message.channel.send(
             `Incorrect number! The next number is \`${
-                lastNumber + 1
+                channel.getLastNumber() + 1
             }\`. **No stats have been changed since the current number was 0.**`,
         );
         return;
     }
 
-    if (number !== channel.lastNumber + 1) {
+    if (number !== channel.getLastNumber() + 1) {
         if (await Save.hasSaves(message.guild.id, message.author.id)) {
             await Save.useSave(message.guild.id, message.author.id);
 
@@ -91,7 +89,11 @@ module.exports = async (message, number) => {
             );
             await message.react(reactions.warning);
             await message.channel.send(
-                formatSaveMessage(message.author.id, saves, channel.lastNumber),
+                formatSaveMessage(
+                    message.author.id,
+                    saves,
+                    channel.getLastNumber(),
+                ),
             );
 
             return;
@@ -102,18 +104,18 @@ module.exports = async (message, number) => {
                 formatGuildSaveMessage(
                     message.author.id,
                     channel.guildSaves,
-                    channel.lastNumber,
+                    channel.getLastNumber(),
                 ),
             );
 
             return;
         }
 
-        const { lastNumber } = channel;
+        const lastNumber = channel.getLastNumber();
 
         channel.userId = null;
         channel.messageId = null;
-        channel.lastNumber = 0;
+        channel.setLastNumber(0);
         await channel.save();
         await message.react(reactions.x);
         await message.reply(
@@ -132,7 +134,11 @@ module.exports = async (message, number) => {
             );
             await message.react(reactions.warning);
             await message.channel.send(
-                formatSaveMessage(message.author.id, saves, channel.lastNumber),
+                formatSaveMessage(
+                    message.author.id,
+                    saves,
+                    channel.getLastNumber(),
+                ),
             );
 
             return;
@@ -143,18 +149,18 @@ module.exports = async (message, number) => {
                 formatGuildSaveMessage(
                     message.author.id,
                     channel.guildSaves,
-                    channel.lastNumber,
+                    channel.getLastNumber(),
                 ),
             );
 
             return;
         }
 
-        const { lastNumber } = channel;
+        const lastNumber = channel.getLastNumber();
 
         channel.userId = null;
         channel.messageId = null;
-        channel.lastNumber = 0;
+        channel.setLastNumber(0);
         await channel.save();
         await message.react(reactions.x);
         await message.reply(
@@ -167,7 +173,7 @@ module.exports = async (message, number) => {
 
     channel.userId = message.author.id;
     channel.messageId = message.id;
-    channel.lastNumber = number;
+    channel.setLastNumber(number);
     channel.addSave();
     await channel.save();
     await message.react(

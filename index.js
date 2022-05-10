@@ -1,11 +1,11 @@
+require('dotenv').config();
+
 const fs = require('fs');
 const mongoose = require('mongoose');
 const { Client, Collection, Intents } = require('discord.js');
 const deleteHandler = require('./handlers/delete');
 const numbersHandler = require('./handlers/numbers');
 const Queue = require('./helpers/queue');
-
-require('dotenv').config();
 
 const prefix = process.env.BOT_PREFIX || '2!';
 const queue = new Queue();
