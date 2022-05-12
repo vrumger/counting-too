@@ -6,6 +6,7 @@ const { Client, Collection, Intents } = require('discord.js');
 const deleteHandler = require('./handlers/delete');
 const numbersHandler = require('./handlers/numbers');
 const Queue = require('./helpers/queue');
+const User = require('./models/user');
 
 const prefix = process.env.BOT_PREFIX || '2!';
 const queue = new Queue();
@@ -26,6 +27,9 @@ const commandFiles = fs
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     commands.set(command.name, command);
+    command.aliases?.forEach(subCommand =>
+        commands.set(subCommand.name, command),
+    );
 }
 
 client.on('ready', async () => {
@@ -44,6 +48,16 @@ client.on('ready', async () => {
             description: command.description,
             options: command.options,
         });
+
+        if (command.aliases) {
+            command.aliases.forEach(subCommand =>
+                commandManager.create({
+                    name: subCommand.name,
+                    description: subCommand.description,
+                    options: subCommand.options,
+                }),
+            );
+        }
     });
 });
 
@@ -92,6 +106,11 @@ The bot is even open source! Check it out for yourself: <https://github.com/vrum
         return;
     }
 
+    const user = await User.findOne({ userId: message.author.id });
+    if (user?.disabled) {
+        return;
+    }
+
     const words = message.content.split(/\s/);
     const number = /^[1-9][0-9]*$/.test(words[0]) ? Number(words[0]) : null;
 
@@ -110,6 +129,8 @@ The bot is even open source! Check it out for yourself: <https://github.com/vrum
         if (!commands.has(command)) {
             return;
         }
+
+        message.commandName = command;
 
         try {
             const handler = commands.get(command);
