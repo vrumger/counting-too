@@ -5,10 +5,13 @@ const lastNumbers = new Map(); // guild.id => [lastNumber, timestamp]
 const reactions = {
     normal: '✅',
     highScore: '☑️',
-    oneHundred: '💯',
     x: '❌',
     warning: '⚠️',
     thinking: '🤔',
+    numbers: {
+        100: '💯',
+        1000: '<a:1000:1001471608579432470>',
+    },
 };
 
 const formatSaveMessage = (userId, saves, lastNumber) =>
@@ -177,11 +180,10 @@ module.exports = async (message, number) => {
     channel.addSave();
     await channel.save();
     await message.react(
-        number === 100
-            ? reactions.oneHundred
-            : channel.isHighScore(number)
-            ? reactions.highScore
-            : reactions.normal,
+        reactions.numbers[number] ??
+            (channel.isHighScore(number)
+                ? reactions.highScore
+                : reactions.normal),
     );
 
     await Save.addSave(message.guild.id, message.author.id);
