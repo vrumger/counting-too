@@ -2,7 +2,7 @@ const Channel = require('../models/channel');
 const Discord = require('discord.js');
 
 module.exports = {
-    name: 'lb',
+    name: 'leaderboard',
     description: 'Show the high score leaderboard',
     async execute(interaction) {
         await Channel.updateOne(
