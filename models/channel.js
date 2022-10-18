@@ -7,6 +7,10 @@ const channelSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        guildName: {
+            type: String,
+            sparse: true,
+        },
         channelId: {
             type: String,
             required: true,
