@@ -18,7 +18,8 @@ module.exports = {
                 guildName: channel.guildName,
                 score: channel.getLastNumber(),
             }))
-            .sort((a, b) => b.highScore - a.highScore);
+            .sort((a, b) => b.highScore - a.highScore)
+            .slice(0, 10);
 
         const embed = new Discord.MessageEmbed();
 
