@@ -16,7 +16,7 @@ module.exports = {
         const guilds = channels
             .map(channel => ({
                 guildName: channel.guildName,
-                highScore: channel.getHighScore(),
+                score: channel.getLastNumber(),
             }))
             .sort((a, b) => b.highScore - a.highScore);
 
@@ -30,7 +30,7 @@ module.exports = {
                     (guild, index) =>
                         `**${index + 1}** ${
                             guild.guildName
-                        } - ${new Intl.NumberFormat().format(guild.highScore)}`,
+                        } - ${new Intl.NumberFormat().format(guild.score)}`,
                 )
                 .join('\n'),
         );
