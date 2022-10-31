@@ -15,6 +15,7 @@ module.exports = {
         });
         const guilds = channels
             .map(channel => ({
+                guildId: channel.guildId,
                 guildName: channel.guildName,
                 score: channel.getLastNumber(),
             }))
@@ -39,21 +40,14 @@ module.exports = {
             guild => guild.guildName === interaction.guild.name,
         );
         if (!inTopTen) {
-            let index = 0;
-            let score = 0;
-
-            for (let i = 0; i < guilds.length; i++) {
-                let guild = guilds[i];
-                if (guild.guildName === interaction.guild.name) {
-                    score = guild.score;
-                    index = i + 1;
-                    break;
-                }
-            }
+            const index = guilds.findIndex(
+                guild => guild.guildId === interaction.guildId,
+            );
+            const { score } = guilds[index];
 
             description +=
                 '\n**…**\n' +
-                `**${index}. ${
+                `**${index + 1}. ${
                     interaction.guild.name
                 } - ${new Intl.NumberFormat().format(score)}**`;
         }
