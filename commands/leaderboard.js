@@ -1,6 +1,13 @@
 const Channel = require('../models/channel');
 const Discord = require('discord.js');
 
+const formatGuild = (index, guild, bold) => {
+    const score = new Intl.NumberFormat().format(guild.score);
+    return bold
+        ? `**${index}. ${guild.guildName} - ${score}**`
+        : `**${index}.** ${guild.guildName} - ${score}`;
+};
+
 module.exports = {
     name: 'leaderboard',
     description: 'Show the high score leaderboard',
@@ -26,13 +33,11 @@ module.exports = {
 
         let description = topGuilds
             .map((guild, index) =>
-                guild.guildName === interaction.guild.name
-                    ? `**${index + 1}. ${
-                          guild.guildName
-                      } - ${new Intl.NumberFormat().format(guild.score)}**`
-                    : `**${index + 1}.** ${
-                          guild.guildName
-                      } - ${new Intl.NumberFormat().format(guild.score)}`,
+                formatGuild(
+                    index + 1,
+                    guild,
+                    guild.guildName === interaction.guild.name,
+                ),
             )
             .join('\n');
 
@@ -43,13 +48,9 @@ module.exports = {
             const index = guilds.findIndex(
                 guild => guild.guildId === interaction.guildId,
             );
-            const { score } = guilds[index];
 
             description +=
-                '\n**…**\n' +
-                `**${index + 1}. ${
-                    interaction.guild.name
-                } - ${new Intl.NumberFormat().format(score)}**`;
+                '\n**…**\n' + formatGuild(index + 1, guilds[index], true);
         }
 
         embed.setColor('#8965d6');
