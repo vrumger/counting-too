@@ -47,7 +47,7 @@ module.exports = {
                 formatGuild(
                     index + 1,
                     guild,
-                    guild.guildName === interaction.guild.name,
+                    guild.guildName === interaction.guild?.name,
                 ),
             )
             .join('\n');
@@ -64,12 +64,17 @@ module.exports = {
         embed.setColor('#8965d6');
         embed.setTitle('Leaderboard');
         embed.setDescription(description);
-        embed.setFooter({
-            text: `Ranked ${ordinal(index + 1)} out of ${new Intl.NumberFormat(
-                'en-US',
-                { notation: 'compact' },
-            ).format(guilds.length)}.`,
-        });
+
+        if (index !== -1) {
+            const rank = ordinal(index + 1);
+            const totalGuilds = new Intl.NumberFormat('en-US', {
+                notation: 'compact',
+            }).format(guilds.length);
+
+            embed.setFooter({
+                text: `Ranked ${rank} out of ${totalGuilds}.`,
+            });
+        }
 
         await interaction.reply({
             embeds: [embed],
