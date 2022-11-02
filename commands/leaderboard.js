@@ -12,11 +12,6 @@ module.exports = {
     name: 'leaderboard',
     description: 'Show the high score leaderboard',
     async execute(interaction) {
-        await Channel.updateOne(
-            { guildId: interaction.guildId },
-            { $set: { guildName: interaction.guild.name } },
-        );
-
         const channels = await Channel.find({
             guildName: { $exists: true },
         });
