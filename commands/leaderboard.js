@@ -22,7 +22,7 @@ const ordinal = index => {
         return index + 'rd';
     }
     return index + 'th';
-}
+};
 
 module.exports = {
     name: 'leaderboard',
@@ -65,9 +65,10 @@ module.exports = {
         embed.setTitle('Leaderboard');
         embed.setDescription(description);
         embed.setFooter({
-            text: `Ranked ${ordinal(index + 1)} out of ${
-                new Intl.NumberFormat('en-US', { notation: 'compact' }).format(guilds.length)
-            }.`,
+            text: `Ranked ${ordinal(index + 1)} out of ${new Intl.NumberFormat(
+                'en-US',
+                { notation: 'compact' },
+            ).format(guilds.length)}.`,
         });
 
         await interaction.reply({
