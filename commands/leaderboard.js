@@ -8,6 +8,21 @@ const formatGuild = (index, guild, bold) => {
         : `**${index}.** ${guild.guildName} - ${score}`;
 };
 
+function ordinal_suffix_of(i) {
+    let j = i % 10,
+        k = i % 100;
+    if (j === 1 && k !== 11) {
+        return i + 'st';
+    }
+    if (j === 2 && k !== 12) {
+        return i + 'nd';
+    }
+    if (j === 3 && k !== 13) {
+        return i + 'rd';
+    }
+    return i + 'th';
+}
+
 module.exports = {
     name: 'leaderboard',
     description: 'Show the high score leaderboard',
@@ -36,14 +51,11 @@ module.exports = {
             )
             .join('\n');
 
-        const inTopTen = topGuilds.some(
-            guild => guild.guildName === interaction.guild.name,
+        const index = guilds.findIndex(
+            guild => guild.guildId === interaction.guildId,
         );
-        if (!inTopTen) {
-            const index = guilds.findIndex(
-                guild => guild.guildId === interaction.guildId,
-            );
 
+        if (index + 1 > 10) {
             description +=
                 '\n**…**\n' + formatGuild(index + 1, guilds[index], true);
         }
@@ -51,6 +63,11 @@ module.exports = {
         embed.setColor('#8965d6');
         embed.setTitle('Leaderboard');
         embed.setDescription(description);
+        embed.setFooter({
+            text: `Ranked ${ordinal_suffix_of(index + 1)} out of ${
+                guilds.length
+            }.`,
+        });
 
         await interaction.reply({
             embeds: [embed],
