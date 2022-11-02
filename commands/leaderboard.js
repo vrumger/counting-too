@@ -66,7 +66,7 @@ module.exports = {
         embed.setDescription(description);
         embed.setFooter({
             text: `Ranked ${ordinal_suffix_of(index + 1)} out of ${
-                guilds.length
+                new Intl.NumberFormat('en-US', { notation: 'compact' }).format(guilds.length)
             }.`,
         });
 
