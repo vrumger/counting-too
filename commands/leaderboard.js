@@ -8,6 +8,22 @@ const formatGuild = (index, guild, bold) => {
         : `**${index}.** ${guild.guildName} - ${score}`;
 };
 
+// https://stackoverflow.com/a/13627586
+const ordinal = index => {
+    const lastDigit = index % 10,
+        teenTh = index % 100;
+    if (lastDigit === 1 && teenTh !== 11) {
+        return index + 'st';
+    }
+    if (lastDigit === 2 && teenTh !== 12) {
+        return index + 'nd';
+    }
+    if (lastDigit === 3 && teenTh !== 13) {
+        return index + 'rd';
+    }
+    return index + 'th';
+};
+
 module.exports = {
     name: 'leaderboard',
     description: 'Show the high score leaderboard',
@@ -36,14 +52,11 @@ module.exports = {
             )
             .join('\n');
 
-        const inTopTen = topGuilds.some(
-            guild => guild.guildName === interaction.guild.name,
+        const index = guilds.findIndex(
+            guild => guild.guildId === interaction.guildId,
         );
-        if (!inTopTen) {
-            const index = guilds.findIndex(
-                guild => guild.guildId === interaction.guildId,
-            );
 
+        if (index + 1 > 10) {
             description +=
                 '\n**…**\n' + formatGuild(index + 1, guilds[index], true);
         }
@@ -51,6 +64,12 @@ module.exports = {
         embed.setColor('#8965d6');
         embed.setTitle('Leaderboard');
         embed.setDescription(description);
+        embed.setFooter({
+            text: `Ranked ${ordinal(index + 1)} out of ${new Intl.NumberFormat(
+                'en-US',
+                { notation: 'compact' },
+            ).format(guilds.length)}.`,
+        });
 
         await interaction.reply({
             embeds: [embed],
