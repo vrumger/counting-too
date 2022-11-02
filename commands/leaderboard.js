@@ -55,6 +55,10 @@ module.exports = {
         const index = guilds.findIndex(
             guild => guild.guildId === interaction.guildId,
         );
+        const rank = ordinal(index + 1);
+        const totalGuilds = new Intl.NumberFormat('en-US', {
+            notation: 'compact',
+        }).format(guilds.length);
 
         if (index + 1 > 10) {
             description +=
@@ -64,17 +68,12 @@ module.exports = {
         embed.setColor('#8965d6');
         embed.setTitle('Leaderboard');
         embed.setDescription(description);
-
-        if (index !== -1) {
-            const rank = ordinal(index + 1);
-            const totalGuilds = new Intl.NumberFormat('en-US', {
-                notation: 'compact',
-            }).format(guilds.length);
-
-            embed.setFooter({
-                text: `Ranked ${rank} out of ${totalGuilds}.`,
-            });
-        }
+        embed.setFooter({
+            text:
+                index === -1
+                    ? `Total ${totalGuilds}.`
+                    : `Ranked ${rank} out of ${totalGuilds}.`,
+        });
 
         await interaction.reply({
             embeds: [embed],
