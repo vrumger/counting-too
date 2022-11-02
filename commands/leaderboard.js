@@ -10,18 +10,18 @@ const formatGuild = (index, guild, bold) => {
 
 // https://stackoverflow.com/a/13627586
 const ordinal = index => {
-    let j = i % 10,
-        k = i % 100;
-    if (j === 1 && k !== 11) {
-        return i + 'st';
+    const lastDigit = index % 10,
+        teenTh = index % 100;
+    if (lastDigit === 1 && teenTh !== 11) {
+        return index + 'st';
     }
-    if (j === 2 && k !== 12) {
-        return i + 'nd';
+    if (lastDigit === 2 && teenTh !== 12) {
+        return index + 'nd';
     }
-    if (j === 3 && k !== 13) {
-        return i + 'rd';
+    if (lastDigit === 3 && teenTh !== 13) {
+        return index + 'rd';
     }
-    return i + 'th';
+    return index + 'th';
 }
 
 module.exports = {
@@ -65,7 +65,7 @@ module.exports = {
         embed.setTitle('Leaderboard');
         embed.setDescription(description);
         embed.setFooter({
-            text: `Ranked ${ordinal_suffix_of(index + 1)} out of ${
+            text: `Ranked ${ordinal(index + 1)} out of ${
                 new Intl.NumberFormat('en-US', { notation: 'compact' }).format(guilds.length)
             }.`,
         });
