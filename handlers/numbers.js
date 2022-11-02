@@ -50,6 +50,11 @@ module.exports = async (message, number) => {
 
     if (!channel) {
         return;
+    } else if (!channel.guildName) {
+        await Channel.updateOne(
+            { guildId: message.guild.id },
+            { $set: { guildName: message.guild.name } },
+        );
     }
 
     if (channel.getLastNumber() === 0) {
