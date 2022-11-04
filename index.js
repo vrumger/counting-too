@@ -7,6 +7,7 @@ const deleteHandler = require('./handlers/delete');
 const numbersHandler = require('./handlers/numbers');
 const Queue = require('./helpers/queue');
 const User = require('./models/user');
+const Channel = require('./models/channel');
 
 const prefix = process.env.BOT_PREFIX || '2!';
 const queue = new Queue();
@@ -35,7 +36,10 @@ for (const file of commandFiles) {
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}`);
 
-    await client.user.setActivity('numbers', { type: 'PLAYING' });
+    const channelsCount = await Channel.countDocuments();
+    await client.user.setActivity(`numbers in ${channelsCount} guilds`, {
+        type: 'PLAYING',
+    });
 
     const guild = process.env.DEV_GUILD_ID
         ? client.guilds.cache.get(process.env.DEV_GUILD_ID)
