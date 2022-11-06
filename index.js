@@ -36,7 +36,10 @@ for (const file of commandFiles) {
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}`);
 
-    await client.user.setActivity('numbers', { type: 'PLAYING' });
+    const channelsCount = await Channel.countDocuments();
+    await client.user.setActivity(`numbers in ${channelsCount} guilds`, {
+        type: 'PLAYING',
+    });
 
     const guild = process.env.DEV_GUILD_ID
         ? client.guilds.cache.get(process.env.DEV_GUILD_ID)

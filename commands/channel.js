@@ -30,6 +30,12 @@ module.exports = {
         channel.channelId = interaction.channelId;
         await channel.save();
 
+        const channelsCount = await Channel.countDocuments();
+        await interaction.client.user.setActivity(
+            `numbers in ${channelsCount} guilds`,
+            { type: 'PLAYING' },
+        );
+
         await interaction.reply({
             content: 'the counting channel has been updated to this channel.',
             ephemeral: true,
