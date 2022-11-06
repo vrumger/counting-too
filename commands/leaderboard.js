@@ -28,8 +28,12 @@ module.exports = {
     name: 'leaderboard',
     description: 'Show the high score leaderboard',
     async execute(interaction) {
+        const date = new Date();
+        date.setDate(date.getDate() - 7);
+
         const channels = await Channel.find({
             guildName: { $exists: true },
+            lastNumberDate: { $gte: date },
         });
         const guilds = channels
             .map(channel => ({

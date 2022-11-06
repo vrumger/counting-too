@@ -28,6 +28,11 @@ const channelSchema = new mongoose.Schema(
             required: true,
             default: xor.encrypt(0),
         },
+        lastNumberDate: {
+            type: Date,
+            required: true,
+            default: () => new Date(),
+        },
         // keep for backwards-compatibility
         highScore: Number,
         highScoreXor: {
@@ -112,6 +117,7 @@ channelSchema.method('setLastNumber', function (number) {
 
     set.lastNumber = undefined;
     set.lastNumberXor = lastNumberXor;
+    set.lastNumberDate = new Date();
     this._lastNumber = number;
     this.set(set);
 });
