@@ -8,6 +8,7 @@ const numbersHandler = require('./handlers/numbers');
 const Queue = require('./helpers/queue');
 const User = require('./models/user');
 const Channel = require('./models/channel');
+const setActivity = require('./helpers/activity');
 
 const prefix = process.env.BOT_PREFIX || '2!';
 const queue = new Queue();
@@ -36,10 +37,7 @@ for (const file of commandFiles) {
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}`);
 
-    const channelsCount = await Channel.countDocuments();
-    await client.user.setActivity(`numbers in ${channelsCount} guilds`, {
-        type: 'PLAYING',
-    });
+    await setActivity(client);
 
     const guild = process.env.DEV_GUILD_ID
         ? client.guilds.cache.get(process.env.DEV_GUILD_ID)
@@ -154,6 +152,7 @@ client.on('guildDelete', async guild => {
     await Channel.deleteOne({
         guildId: guild.id,
     });
+    await setActivity(client);
 });
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
