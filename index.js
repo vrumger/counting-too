@@ -7,6 +7,7 @@ const deleteHandler = require('./handlers/delete');
 const numbersHandler = require('./handlers/numbers');
 const Queue = require('./helpers/queue');
 const User = require('./models/user');
+const Channel = require('./models/channel');
 
 const prefix = process.env.BOT_PREFIX || '2!';
 const queue = new Queue();
@@ -144,6 +145,12 @@ The bot is even open source! Check it out for yourself: <https://github.com/vrum
             await message.reply('there was an error.');
         }
     }
+});
+
+client.on('guildDelete', async guild => {
+    await Channel.deleteOne({
+        guildId: guild.id,
+    });
 });
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
