@@ -23,6 +23,7 @@ module.exports = {
         if (!channel) {
             channel = new Channel({
                 guildId: interaction.guildId,
+                guildName: interaction.guild.name,
             });
         }
 
