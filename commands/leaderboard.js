@@ -4,8 +4,8 @@ const Discord = require('discord.js');
 const formatGuild = (index, guild, bold) => {
     const score = new Intl.NumberFormat().format(guild.score);
     return bold
-        ? `**${index}. ${guild.guildName} - ${score}**`
-        : `**${index}.** ${guild.guildName} - ${score}`;
+        ? `${index}. **${guild.guildName} - ${score}**`
+        : `${index}. ${guild.guildName} - ${score}`;
 };
 
 // https://stackoverflow.com/a/13627586
