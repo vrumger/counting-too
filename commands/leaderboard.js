@@ -44,7 +44,7 @@ module.exports = {
             .sort((a, b) => b.score - a.score);
         const topGuilds = guilds.slice(0, 10);
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
 
         let description = topGuilds
             .map((guild, index) =>

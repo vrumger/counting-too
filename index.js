@@ -2,7 +2,14 @@ require('dotenv').config();
 
 const fs = require('fs');
 const mongoose = require('mongoose');
-const { Client, Collection, Intents } = require('discord.js');
+const {
+    Client,
+    Collection,
+    Events,
+    IntentsBitField,
+    GatewayIntentBits,
+    Partials,
+} = require('discord.js');
 const deleteHandler = require('./handlers/delete');
 const numbersHandler = require('./handlers/numbers');
 const Queue = require('./helpers/queue');
@@ -15,11 +22,12 @@ const queue = new Queue();
 const commands = new Collection();
 const client = new Client({
     intents: [
-        Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
+        IntentsBitField.Flags.DirectMessages,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
     ],
-    partials: ['CHANNEL', 'MESSAGE'],
+    partials: [Partials.Channel, Partials.Message],
 });
 
 const commandFiles = fs
@@ -34,7 +42,7 @@ for (const file of commandFiles) {
     );
 }
 
-client.on('ready', async () => {
+client.on(Events.ClientReady, async () => {
     console.log(`Logged in as ${client.user.tag}`);
 
     await setActivity(client);
@@ -63,7 +71,7 @@ client.on('ready', async () => {
     });
 });
 
-client.on('interactionCreate', async interaction => {
+client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isCommand()) {
         return;
     }
@@ -90,9 +98,9 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-client.on('messageDelete', deleteHandler);
+client.on(Events.MessageDelete, deleteHandler);
 
-client.on('messageCreate', async message => {
+client.on(Events.MessageCreate, async message => {
     if (message.author.bot) return;
 
     if (message.guild === null) {
@@ -148,7 +156,7 @@ The bot is even open source! Check it out for yourself: <https://github.com/vrum
     }
 });
 
-client.on('guildDelete', async guild => {
+client.on(Events.GuildDelete, async guild => {
     await Channel.deleteOne({
         guildId: guild.id,
     });

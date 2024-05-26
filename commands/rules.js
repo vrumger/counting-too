@@ -12,7 +12,7 @@ module.exports = {
     name: 'rules',
     description: 'Read the rules of the game',
     async execute(interaction) {
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
 
         embed.setTitle('Rules of the game');
         embed.setDescription(description);

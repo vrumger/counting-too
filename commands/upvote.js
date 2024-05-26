@@ -4,7 +4,7 @@ module.exports = {
     name: 'upvote',
     description: 'Links to upvote the bot',
     async execute(interaction) {
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
 
         embed.setTitle('Upvote the bot!');
         embed.setDescription(

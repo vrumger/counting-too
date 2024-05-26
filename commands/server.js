@@ -14,22 +14,30 @@ module.exports = {
             return;
         }
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
 
         embed.setColor('#8965d6');
         embed.setTitle(`Info for ${interaction.guild.name}`);
-        embed.addField('Current number', channel.getLastNumber().toString());
-        embed.addField('Guild saves', channel.guildSaves.toFixed(3));
-        embed.addField(
-            'Last counted by',
-            channel.userId ? `<@${channel.userId}>` : 'N/A',
-        );
-        embed.addField(
-            'High score',
-            `${channel.getHighScore()} (${timeago.format(
-                channel.highScoreDate,
-            )})`,
-        );
+        embed.addFields([
+            {
+                name: 'Current number',
+                value: channel.getLastNumber().toString(),
+            },
+            {
+                name: 'Guild saves',
+                value: channel.guildSaves.toFixed(3),
+            },
+            {
+                name: 'Last counted by',
+                value: channel.userId ? `<@${channel.userId}>` : 'N/A',
+            },
+            {
+                name: 'High score',
+                value: `${channel.getHighScore()} (${timeago.format(
+                    channel.highScoreDate,
+                )})`,
+            },
+        ]);
 
         await interaction.reply({
             embeds: [embed],

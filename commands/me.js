@@ -9,7 +9,7 @@ module.exports = {
         {
             name: 'user',
             description: 'Get info about a yourself or a different user',
-            type: 'USER',
+            type: Discord.ApplicationCommandOptionType.User,
             required: false,
         },
     ],
@@ -38,12 +38,17 @@ module.exports = {
             });
         }
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
 
         embed.setColor('#8965d6');
         embed.setThumbnail(user.avatarURL());
         embed.setTitle(`Info for ${user.tag}`);
-        embed.addField('Saves', save.saves.toFixed(2));
+        embed.addFields([
+            {
+                name: 'Saves',
+                value: save.saves.toFixed(2),
+            },
+        ]);
 
         await interaction.reply({
             embeds: [embed],
